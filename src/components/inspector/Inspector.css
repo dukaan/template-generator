@@ -1,0 +1,6 @@
+.inspectorBase {
+  height: calc(100vh - 50px);
+  overflow-y: scroll;
+  color: #fff;
+  background-color: #282828;
+  width: 450px; }
