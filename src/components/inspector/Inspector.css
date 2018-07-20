@@ -30,8 +30,6 @@
     .attributeInspector .addEnumWrapper .innerEnumWrapper {
       display: flex;
       flex-wrap: wrap; }
-  .attributeInspector input {
-    margin-right: 20px; }
 
 .childElementInspector {
   padding: 20px; }

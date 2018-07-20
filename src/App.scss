@@ -10,6 +10,14 @@ h1 {
   font-size: 1.5em;
 }
 
+input[type=text] {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid white;
+  color: white;
+  margin: 0 $base-padding $base-padding 0;
+}
+
 .topBar {
   box-sizing: border-box;
   display: flex;
