@@ -1,0 +1,12 @@
+@import '../variables.scss';
+
+.mainWrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.modelTree {
+  background-color: $tree-background-color;
+  width: calc(100% - #{$inspector-width});
+  min-height: calc(100vh - #{$top-bar-height});
+}

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+  xmlns="http://www.sprylab.com/2015/purple-issue-ds"
+  targetNamespace="http://www.sprylab.com/2015/purple-issue-ds"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+  xmlns:r="http://www.artifacts.de/2012/richtext-1.0">
+
+	<xs:import schemaLocation="storytelling-richtext.xsd" namespace="http://www.artifacts.de/2012/richtext-1.0"/>
+
+<!-- STRUCTURING ELEMENTS -->
+	<xs:complexType name="Article">
+		<xs:complexContent>
+			<xs:extension base="Fragment">
+				<xs:sequence>
+					<xs:element name="opener" minOccurs="0" maxOccurs="unbounded" type="Opener" />
+					<xs:element name="section" minOccurs="0" maxOccurs="unbounded" type="Section" />
+					<xs:element name="image" minOccurs="0" maxOccurs="unbounded" type="Image" />
+					<xs:element name="tocThumbnail" minOccurs="0" maxOccurs="unbounded" type="Image" />
+				</xs:sequence>
+				<xs:attribute name="title" type="xs:string" />
+				<xs:attribute name="alias" type="xs:string" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="Opener">
+		<xs:complexContent>
+			<xs:extension base="Fragment">
+				<xs:sequence>
+					<xs:element name="openerImage" minOccurs="0" maxOccurs="unbounded" type="Image" />
+					<xs:element name="openerVideo" minOccurs="0" maxOccurs="unbounded" type="Video" />
+					<xs:element name="openerCaption" minOccurs="0" maxOccurs="unbounded" type="NoRichText" />
+				</xs:sequence>
+				<xs:attribute name="fade" type="xs:string" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="Section">
+		<xs:complexContent>
+			<xs:extension base="Fragment">
+				<xs:sequence>
+					<xs:element name="topic" minOccurs="0" maxOccurs="unbounded" type="Topic" />
+					<xs:element name="subsection" minOccurs="0" maxOccurs="unbounded" type="Subsection" />
+					<xs:element name="tabbedSubsection" minOccurs="0" maxOccurs="unbounded" type="TabbedSubsection" />
+					<xs:element name="spacer" minOccurs="0" maxOccurs="unbounded" type="Spacer" />
+				</xs:sequence>
+				<xs:attribute name="backgroundColor" type="xs:string" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="Spacer">
+		<xs:complexContent>
+			<xs:extension base="Fragment">
+				<xs:sequence>
+				</xs:sequence>
+				<xs:attribute name="height" type="xs:string" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="Topic">
+		<xs:complexContent>
+			<xs:extension base="Fragment">
+				<xs:sequence>
+					<xs:element name="topicIcon" minOccurs="0" maxOccurs="1" type="Image" />
+				</xs:sequence>
+				<xs:attribute name="topicTitle" type="xs:string" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="Subsection">
+		<xs:complexContent>
+			<xs:extension base="Fragment">
+				<xs:sequence>
+					<xs:element name="slider" minOccurs="0" maxOccurs="unbounded" type="Slider" />
+					<xs:element name="webview" minOccurs="0" maxOccurs="unbounded" type="Webview" />
+					<xs:element name="list" minOccurs="0" maxOccurs="unbounded" type="List" />
+					<xs:element name="heading" minOccurs="0" maxOccurs="unbounded" type="NoRichText" />
+					<xs:element name="body" minOccurs="0" maxOccurs="unbounded" type="RichText" />
+					<xs:element name="moreArticles" minOccurs="0" maxOccurs="unbounded" type="MoreArticles" />
+					<xs:element name="spacer" minOccurs="0" maxOccurs="unbounded" type="Spacer" />
+				</xs:sequence>
+				<xs:attribute name="border" type="xs:string" />
+				<xs:attribute name="backgroundColor" type="xs:string" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="TabbedSubsection">
+		<xs:complexContent>
+			<xs:extension base="Fragment">
+				<xs:sequence>
+					<xs:element name="tab" minOccurs="0" maxOccurs="unbounded" type="Tab" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="MoreArticles">
+		<xs:complexContent>
+			<xs:extension base="Fragment">
+				<xs:sequence>
+					<xs:element name="moreArticle" minOccurs="0" maxOccurs="unbounded" type="MoreArticle" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="MoreArticle">
+		<xs:complexContent>
+			<xs:extension base="Fragment">
+				<xs:sequence>
+					<xs:element name="moreArticleImage" minOccurs="0" maxOccurs="1" type="Image" />
+					<xs:element name="moreArticleText" minOccurs="0" maxOccurs="1" type="RichText" />
+				</xs:sequence>
+				<xs:attribute name="jumpTo" type="xs:string" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="Tab">
+		<xs:complexContent>
+			<xs:extension base="Fragment">
+				<xs:sequence>
+					<xs:element name="subsection" minOccurs="0" maxOccurs="unbounded" type="Subsection" />
+				</xs:sequence>
+				<xs:attribute name="tabIconActive" type="xs:anyURI" />
+				<xs:attribute name="tabIconInactive" type="xs:anyURI" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="Slider">
+		<xs:complexContent>
+			<xs:extension base="Fragment">
+				<xs:sequence>
+					<xs:element name="slide" minOccurs="0" maxOccurs="unbounded" type="Slide" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="Slide">
+		<xs:complexContent>
+			<xs:extension base="Fragment">
+				<xs:sequence>
+					<xs:element name="sliderTitle" minOccurs="0" maxOccurs="unbounded" type="RichText" />
+					<xs:element name="sliderSubtitle" minOccurs="0" maxOccurs="unbounded" type="RichText" />
+				</xs:sequence>
+				<xs:attribute name="link" type="xs:anyURI" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="List">
+		<xs:complexContent>
+			<xs:extension base="Fragment">
+				<xs:sequence>
+					<xs:element name="listColumn" minOccurs="0" maxOccurs="unbounded" type="ListColumn" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="Webview">
+		<xs:complexContent>
+			<xs:extension base="Fragment">
+				<xs:sequence>
+
+				</xs:sequence>
+				<xs:attribute name="webSrc" type="xs:anyURI" />
+				<xs:attribute name="aspect" type="xs:string" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ListColumn">
+		<xs:complexContent>
+			<xs:extension base="Fragment">
+				<xs:sequence>
+					<xs:element name="listTitle" minOccurs="0" maxOccurs="unbounded" type="NoRichText" />
+					<xs:element name="listItems" minOccurs="0" maxOccurs="unbounded" type="RichText" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+<!-- MEDIA ELEMENTS -->
+    <xs:complexType name="Image">
+		<xs:complexContent>
+			<xs:extension base="Fragment">
+				<xs:attribute name="src" type="xs:anyURI"/>
+				<xs:sequence>
+
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="Video">
+		<xs:complexContent>
+			<xs:extension base="Fragment">
+				<xs:attribute name="videoSrc" type="xs:anyURI"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+<!-- TEXT ELEMENTS -->
+	<xs:complexType name="RichText">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="name" type="xs:string"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="NoRichText">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="name" type="xs:string"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+<!-- BASIC ELEMENTS -->
+	<xs:complexType name="Tagged">
+		<xs:attribute name="taggedId"/>
+		<xs:attribute name="taggedPageId"/>
+	</xs:complexType>
+
+	<xs:complexType name="Fragment">
+		<xs:complexContent>
+			<xs:extension base="Tagged">
+				<xs:attribute name="name" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="Issue">
+		<xs:sequence>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element name="article" type="Article"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="issue" type="Issue">
+	</xs:element>
+
+</xs:schema>

@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  StoryTelling Rich Text XML Schema
+ 
+  Copyright (c) 2012 artifacts Software GmbH & Co. KG
+  All Rights Reserved. 
+  
+  This shema is based on XHTML 1.0 Strict DTD.
+  
+  For some attributes related to linking, the following XML namespace is used:
+  
+  "xmlns:xlink="http://www.w3.org/1999/xlink"
+  
+-->
+<!-- ================ Character mnemonic entities ========================= -->
+<!-- ================== Imported Names ==================================== -->
+<!-- media type, as per [RFC2045] -->
+<!-- a character encoding, as per [RFC2045] -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" targetNamespace="http://www.artifacts.de/2012/richtext-1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:r="http://www.artifacts.de/2012/richtext-1.0">
+  <xs:import namespace="http://www.w3.org/1999/xlink" schemaLocation="xlink.xsd"/>
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
+  
+  <xs:simpleType name="LanguageCode">
+    <xs:restriction base="xs:NMTOKEN"/>
+  </xs:simpleType>
+  <!-- a language code, as per [RFC1766] -->
+  <!-- a single character from [ISO10646] -->
+  <xs:simpleType name="Number">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+  <!-- one or more digits -->
+  <xs:simpleType name="URI">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+  <!-- a Uniform Resource Identifier, see [RFC2396] -->
+  <xs:simpleType name="Text">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+  <!-- used for titles etc. -->
+  <xs:simpleType name="Length">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+  <!-- nn for pixels or nn% for percentage length -->
+  <!-- integer representing length in pixels -->
+  <!-- =================== Generic Attributes =============================== -->
+  <!--
+    core attributes common to most elements
+    class    space separated list of classes
+  -->
+  <xs:attributeGroup name="coreattrs">
+    <xs:attribute name="class"/>
+  </xs:attributeGroup>
+  <!--
+    internationalization attributes
+    lang        language code (backwards compatible)
+    xml:lang    language code (as per XML 1.0 spec)
+    dir         direction for weak/neutral text
+  -->
+  <xs:attributeGroup name="i18n">
+    <!--xs:attribute name="lang" type="r:LanguageCode"/ -->
+    <xs:attribute ref="xml:lang"/>
+    <xs:attribute name="dir">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="ltr"/>
+          <xs:enumeration value="rtl"/>
+          <xs:enumeration value="auto"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="attrs">
+    <xs:attributeGroup ref="r:coreattrs"/>
+    <xs:attributeGroup ref="r:i18n"/>
+  </xs:attributeGroup>
+  <!-- =================== Text Elements ==================================== -->
+  <xs:element name="special" abstract="true" substitutionGroup="r:inline"/>
+  <!-- u and strike are not supported as in xhtml strict, use styles instead. -->
+  <!-- i and b are not supported, use strong and em instead -->
+  <xs:element name="phrase" abstract="true" substitutionGroup="r:inline"/>
+  <xs:element name="inline" abstract="true"/>
+  <!-- %Inline; covers inline or "text-level" elements -->
+  <xs:complexType name="Inline" mixed="true">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" ref="r:inline"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!-- ================== Block level elements ============================== -->
+  <xs:element name="lists" abstract="true" substitutionGroup="r:block"/>
+  <xs:element name="blocktext" abstract="true" substitutionGroup="r:block"/>
+  <xs:element name="block" abstract="true"/>
+  <xs:complexType name="Block">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" ref="r:block"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!-- %Flow; mixes Block and Inline and is used for list items etc. -->
+  <xs:complexType name="Flow" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="r:block"/>
+      <xs:element ref="r:inline"/>
+    </xs:choice>
+  </xs:complexType>
+  <!-- ================== Content models for exclusions ===================== -->
+  <!-- a elements use %Inline; excluding a -->
+  <xs:complexType name="a.content" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="r:special"/>
+      <xs:element ref="r:phrase"/>
+    </xs:choice>
+  </xs:complexType>
+  <!-- pre uses %Inline excluding img, sup or sup -->
+  <xs:complexType name="pre.content" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="r:a"/>
+      <xs:element ref="r:br"/>
+      <xs:element ref="r:span"/>
+      <xs:element ref="r:phrase"/>
+    </xs:choice>
+  </xs:complexType>
+  <!-- ================ Document Structure ================================== -->
+  <xs:element name="div" type="r:Block"/>
+  <!-- May not contain flow content as in xhtml. Merely used as document root -->
+  <!-- =================== Paragraphs ======================================= -->
+  <xs:element name="p" substitutionGroup="r:block">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="r:Inline">
+          <xs:attributeGroup ref="r:p.attlist"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="p.attlist">
+    <xs:attributeGroup ref="r:attrs"/>
+  </xs:attributeGroup>
+  <!-- =================== Lists ============================================ -->
+  <!-- Unordered list -->
+  <xs:element name="ul" substitutionGroup="r:lists">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="r:li"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="r:ul.attlist"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="ul.attlist">
+    <xs:attributeGroup ref="r:attrs"/>
+  </xs:attributeGroup>
+  <!-- Ordered (numbered) list -->
+  <xs:element name="ol" substitutionGroup="r:lists">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="r:li"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="r:ol.attlist"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="ol.attlist">
+    <xs:attributeGroup ref="r:attrs"/>
+  </xs:attributeGroup>
+  <!-- list item -->
+  <xs:element name="li">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="r:Flow">
+          <xs:attributeGroup ref="r:li.attlist"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="li.attlist">
+    <xs:attributeGroup ref="r:attrs"/>
+  </xs:attributeGroup>
+  <!-- =================== Preformatted Text ================================ -->
+  <!-- content is %Inline; excluding "img|object|big|small|sub|sup" -->
+  <xs:element name="pre" substitutionGroup="r:blocktext">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="r:pre.content">
+          <xs:attributeGroup ref="r:pre.attlist"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="pre.attlist">
+    <xs:attributeGroup ref="r:attrs"/>
+    <xs:attribute ref="xml:space" default="preserve"/>
+  </xs:attributeGroup>
+  <!-- =================== Block-like Quotes ================================ -->
+  <xs:element name="blockquote" substitutionGroup="r:blocktext">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="r:Block">
+          <xs:attributeGroup ref="r:blockquote.attlist"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="blockquote.attlist">
+    <xs:attributeGroup ref="r:attrs"/>
+    <xs:attribute name="cite" type="r:URI"/>
+  </xs:attributeGroup>
+  <!-- ================== The Anchor Element ================================ -->
+  <!-- content is %Inline; except that anchors shouldn't be nested -->
+  <xs:element name="a" substitutionGroup="r:inline">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="r:a.content">
+          <xs:attributeGroup ref="r:a.attlist"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="a.attlist">
+    <xs:attributeGroup ref="r:attrs"/>
+    <xs:attribute ref="xlink:type" default="simple"/>
+    <!--<xs:attribute ref="xlink:href"/>-->
+    <xs:attribute name="href" type="xlink:hrefType"/>
+    <xs:attribute ref="xlink:role"/>
+    <xs:attribute ref="xlink:title"/>
+    <xs:attribute ref="xlink:show"/>
+    <xs:attribute ref="xlink:actuate"/>
+  </xs:attributeGroup>
+  <!--
+    
+    Note that the XHTML href attribute has been replaced by the
+    xlink:href attribute.
+    
+    charset, type, name and accesskey are not supported. target is not
+    supported, either, because it resembles presentation
+    information. Even XHTML 1.0 strict does not support the target
+    attribute, only XHTML 1.0 transitional includes it. If desired, rendering parameters
+    may be stored in appropriate  xlink:role attributes.   
+    
+  -->
+  <!-- ===================== Inline Elements ================================ -->
+  <xs:element name="span" substitutionGroup="r:special">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="r:Inline">
+          <xs:attributeGroup ref="r:span.attlist"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <!-- generic language/style container -->
+  <xs:attributeGroup name="span.attlist">
+    <xs:attributeGroup ref="r:attrs"/>
+  </xs:attributeGroup>
+  <xs:element name="br" substitutionGroup="r:special">
+    <xs:complexType mixed="true">
+      <xs:attributeGroup ref="r:br.attlist"/>
+    </xs:complexType>
+  </xs:element>
+  <!-- forced line break -->
+  <xs:attributeGroup name="br.attlist">
+    <xs:attributeGroup ref="r:coreattrs"/>
+  </xs:attributeGroup>
+  <xs:element name="em" substitutionGroup="r:phrase">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="r:Inline">
+          <xs:attributeGroup ref="r:em.attlist"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <!-- emphasis -->
+  <xs:attributeGroup name="em.attlist">
+    <xs:attributeGroup ref="r:attrs"/>
+  </xs:attributeGroup>
+  <xs:element name="strong" substitutionGroup="r:phrase">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="r:Inline">
+          <xs:attributeGroup ref="r:strong.attlist"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <!-- strong emphasis -->
+  <xs:attributeGroup name="strong.attlist">
+    <xs:attributeGroup ref="r:attrs"/>
+  </xs:attributeGroup>
+  <xs:element name="sub" substitutionGroup="r:phrase">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="r:Inline">
+          <xs:attributeGroup ref="r:sub.attlist"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <!-- subscript -->
+  <xs:attributeGroup name="sub.attlist">
+    <xs:attributeGroup ref="r:attrs"/>
+  </xs:attributeGroup>
+  <xs:element name="sup" substitutionGroup="r:phrase">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="r:Inline">
+          <xs:attributeGroup ref="r:sup.attlist"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <!-- superscript -->
+  <xs:attributeGroup name="sup.attlist">
+    <xs:attributeGroup ref="r:attrs"/>
+  </xs:attributeGroup>
+  <!-- =================== Images =========================================== -->
+  <!--
+    To avoid accessibility problems for people who aren't
+    able to see the image, you should provide a text
+    description using the alt and longdesc attributes.
+    In addition, avoid the use of server-side image maps.
+    Note that in this DTD there is no name attribute. That
+    is only available in the transitional and frameset DTD.
+  -->
+  <xs:element name="img" substitutionGroup="r:special">
+    <xs:complexType>
+      <xs:attributeGroup ref="r:img.attlist"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="img.attlist">
+    <xs:attributeGroup ref="r:attrs"/>
+    <xs:attribute name="alt" use="required" type="r:Text"/>
+    <xs:attribute name="height" type="r:Length"/>
+    <xs:attribute name="width" type="r:Length"/>
+    <xs:attribute ref="xlink:type" default="simple"/>
+    <xs:attribute ref="xlink:href"/>
+    <xs:attribute ref="xlink:role"/>
+    <xs:attribute ref="xlink:title"/>
+    <xs:attribute ref="xlink:show"/>
+    <xs:attribute ref="xlink:actuate"/>
+  </xs:attributeGroup>
+  <!--
+    Note that the XHTML src attribute has been replaced by the xlink:href attribute.
+    
+    The XHTML attributes longdesc, usemap, ismap are not supported.
+  -->
+  <!-- ======================= Tables ======================================= -->
+  <!-- Derived from IETF HTML table standard, see [RFC1942] -->
+  <!--
+    horizontal alignment attributes for cell contents
+    
+    The XHTML 'align' attribute values 'justify' and 'char' are not supported
+    for td elements by IE, and are thus left out, together with the char and
+    charoff attributes.
+  -->
+  <xs:attributeGroup name="cellhalign">
+    <xs:attribute name="align">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="left"/>
+          <xs:enumeration value="center"/>
+          <xs:enumeration value="right"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <!-- vertical alignment attributes for cell contents -->
+  <xs:attributeGroup name="cellvalign">
+    <xs:attribute name="valign">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="top"/>
+          <xs:enumeration value="middle"/>
+          <xs:enumeration value="bottom"/>
+          <xs:enumeration value="baseline"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:element name="table" substitutionGroup="r:block">
+    <xs:complexType>
+      <xs:choice>
+        <xs:element ref="r:tbody"/>
+        <xs:element maxOccurs="unbounded" ref="r:tr"/>
+      </xs:choice>
+      <xs:attributeGroup ref="r:table.attlist"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="tbody">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="r:tr"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="r:tbody.attlist"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="tr">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="r:td"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="r:tr.attlist"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="td">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="r:Flow">
+          <xs:attributeGroup ref="r:td.attlist"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="table.attlist">
+    <xs:attributeGroup ref="r:attrs"/>
+    <xs:attribute name="summary" type="r:Text"/>
+  </xs:attributeGroup>
+  <!--
+    align, width, border, frame, rules, cellspacing, cellpadding are not supported. 
+    Render them in templates or use class="xxx" and cascading stylesheets instead
+  -->
+  <xs:attributeGroup name="tbody.attlist">
+    <xs:attributeGroup ref="r:attrs"/>
+    <xs:attributeGroup ref="r:cellhalign"/>
+    <xs:attributeGroup ref="r:cellvalign"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="tr.attlist">
+    <xs:attributeGroup ref="r:attrs"/>
+    <xs:attributeGroup ref="r:cellhalign"/>
+    <xs:attributeGroup ref="r:cellvalign"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="td.attlist">
+    <xs:attributeGroup ref="r:attrs"/>
+    <xs:attribute name="abbr" type="r:Text"/>
+    <xs:attribute name="rowspan" default="1" type="r:Number"/>
+    <xs:attribute name="colspan" default="1" type="r:Number"/>
+    <xs:attributeGroup ref="r:cellhalign"/>
+    <xs:attributeGroup ref="r:cellvalign"/>
+  </xs:attributeGroup>
+</xs:schema>

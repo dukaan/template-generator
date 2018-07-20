@@ -1,0 +1,9 @@
+@import '../../variables.scss';
+
+.inspectorBase {
+  height: calc(100vh - #{$top-bar-height});
+  overflow-y: scroll;
+  color: $light-text;
+  background-color: $inspector-base-color;
+  width: $inspector-width;
+}

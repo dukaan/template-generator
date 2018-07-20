@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<xs:schema xmlns="http://www.sprylab.com/2015/purple-issue-ds"
+           targetNamespace="http://www.sprylab.com/2015/purple-issue-ds" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified" xmlns:r="http://www.artifacts.de/2012/richtext-1.0">
+    <xs:import schemaLocation="storytelling-richtext.xsd" namespace="http://www.artifacts.de/2012/richtext-1.0"/>
+    <xs:complexType name="NoRichText">
+        <xs:simpleContent>
+            <xs:extension base="xs:string"/>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="RichText">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="alignment" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="Issue">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="cover" minOccurs="0" maxOccurs="unbounded" type="Cover"/>
+                <xs:element name="article" minOccurs="0" maxOccurs="unbounded" type="Article"/>
+                <xs:element name="contents" minOccurs="0" maxOccurs="unbounded" type="Contents"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Cover">
+        <xs:complexContent>
+            <xs:extension base="Fragment">
+                <xs:sequence>
+                    <xs:element name="title" minOccurs="0" maxOccurs="unbounded" type="RichText"/>
+                    <xs:element name="coverImage" minOccurs="0" maxOccurs="unbounded" type="Image"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Article">
+        <xs:complexContent>
+            <xs:extension base="Fragment">
+                <xs:sequence>
+                    <xs:element name="image" minOccurs="0" maxOccurs="unbounded" type="Image"/>
+                    <xs:element name="section" minOccurs="0" maxOccurs="unbounded" type="Section"/>
+                    <xs:element name="text" minOccurs="0" maxOccurs="unbounded" type="RichText"/>
+                    <xs:element name="gallery" minOccurs="0" maxOccurs="unbounded" type="Gallery"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Contents">
+        <xs:complexContent>
+            <xs:extension base="Fragment">
+                <xs:sequence>
+                    <xs:element name="slider" minOccurs="0" maxOccurs="unbounded" type="Slider"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Image">
+        <xs:complexContent>
+            <xs:extension base="Fragment">
+                <xs:attribute name="src" type="xs:string"/>
+                <xs:attribute name="margin" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Section">
+        <xs:complexContent>
+            <xs:extension base="Fragment"/>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Gallery">
+        <xs:complexContent>
+            <xs:extension base="Fragment">
+                <xs:sequence>
+                    <xs:element name="image" minOccurs="0" maxOccurs="unbounded" type="Image"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Slider">
+        <xs:complexContent>
+            <xs:extension base="Fragment">
+                <xs:sequence>
+                    <xs:element name="slide" minOccurs="0" maxOccurs="unbounded" type="Slide"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Slide">
+        <xs:complexContent>
+            <xs:extension base="Fragment">
+                <xs:sequence>
+                    <xs:element name="text" minOccurs="0" maxOccurs="unbounded" type="RichText"/>
+                    <xs:element name="image" minOccurs="0" maxOccurs="unbounded" type="Image"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Fragment">
+        <xs:complexContent>
+            <xs:extension base="Tagged">
+                <xs:attribute name="name" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Tagged">
+        <xs:attribute name="taggedId"/>
+        <xs:attribute name="taggedPageId"/>
+    </xs:complexType>
+    <xs:element name="issue" type="Issue"/>
+</xs:schema>
