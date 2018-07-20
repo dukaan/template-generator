@@ -6,7 +6,34 @@
 }
 
 .modelTree {
+  color: $dark-text;
   background-color: $tree-background-color;
   width: calc(100% - #{$inspector-width});
   min-height: calc(100vh - #{$top-bar-height});
+  padding: $base-padding;
+  box-sizing: border-box;
+}
+
+
+// tree styling
+
+.treeElement .rst__rowContents {
+  background-color: #888888 !important;
+  border: none !important;
+
+  & .rst__rowLabel {
+    opacity: 0.5 !important;
+  }
+}
+
+.treeElement.active .rst__rowContents {
+  background-color: #ffffff !important;
+
+  & .rst__rowLabel {
+    opacity: 1 !important;
+  }
+}
+
+.rst__moveHandle {
+  display: none;
 }

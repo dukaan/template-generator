@@ -477,7 +477,7 @@ class App extends Component {
         return (
             <div className="App">
                 <div className="topBar">
-                    Purple Template Generator
+                    <h1>Purple Template Generator</h1>
                     <div className="topBarButton">
                         <button onClick={() => expandTree(true)}>
                             Expand all

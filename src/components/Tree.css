@@ -3,6 +3,23 @@
   flex-direction: row; }
 
 .modelTree {
+  color: #000;
   background-color: #353535;
   width: calc(100% - 450px);
-  min-height: calc(100vh - 50px); }
+  min-height: calc(100vh - 65px);
+  padding: 20px;
+  box-sizing: border-box; }
+
+.treeElement .rst__rowContents {
+  background-color: #888888 !important;
+  border: none !important; }
+  .treeElement .rst__rowContents .rst__rowLabel {
+    opacity: 0.5 !important; }
+
+.treeElement.active .rst__rowContents {
+  background-color: #ffffff !important; }
+  .treeElement.active .rst__rowContents .rst__rowLabel {
+    opacity: 1 !important; }
+
+.rst__moveHandle {
+  display: none; }

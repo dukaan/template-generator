@@ -9,12 +9,9 @@ import './Tree.css';
 
 export default class Tree extends Component {
 
-    constructor(props) {
-        super(props);
-    }
-
     state = {
         treeData: store.getState().treeData,
+        activeNodeName: undefined
     }
 
     componentWillReceiveProps(nextProps) {
@@ -41,11 +38,16 @@ export default class Tree extends Component {
                                     }}
                                     onClick={() => {
                                         store.dispatch(setCurrentElementData(rowInfo.node));
+                                        this.setState(prevState => ({
+                                            ...prevState,
+                                            activeNodeName: rowInfo.node.title
+                                        }));
                                     }}
                                 >
                                     inspect
                                 </button>,
                             ],
+                            className: 'treeElement ' + (this.state.activeNodeName === rowInfo.node.title ? 'active' : '')
                         })}
                     />
                 </div>

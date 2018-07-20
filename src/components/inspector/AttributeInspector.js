@@ -13,6 +13,7 @@ class AttributeInspector extends React.Component {
         this.addAttributeRef = React.createRef();
         this.enumKeyRef = React.createRef();
         this.enumValueRef = React.createRef();
+        this.attributeSelectRef = React.createRef();
     }
 
     handleAttributeChange(event, attribute) {
@@ -66,9 +67,10 @@ class AttributeInspector extends React.Component {
         store.dispatch(initTreeData(this.initTree(newTypes, newElements)));
     }
 
-    handleAddEnum(attribute) {
+    handleAddEnum() {
         const key = this.enumKeyRef.current.value;
         const value = this.enumValueRef.current.value;
+        const attribute = this.attributeSelectRef.current.value;
 
         let newElements = JSON.parse(JSON.stringify(store.getState().elements));
         if (!(attribute in newElements[this.currentElementData.elementData.name].attributeEnums)) {
@@ -126,64 +128,101 @@ class AttributeInspector extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="attributeInspector">
 
-                ATTRIBUTES <br/>
+                <h3>ATTRIBUTES</h3>
 
                 {
-                    this.currentElementData &&
-                    <div>
-                        Attributes
-                        for {this.currentElementData ? `${this.currentElementData.title} (${this.currentElementData.subtitle})` : ''}:<br/>
-                        {
-                            this.currentElementData
-                            && store.getState().types[this.currentElementData.elementData.type].attributes.map(attribute => {
-                                const uuidv4 = require('uuid/v4');
-                                return (
-                                    <div key={uuidv4()}>
-                                        <div style={{display: 'flex', flexDirection: 'row'}}>
-                                            <input type="checkbox"
-                                                   id={attribute}
-                                                   name={attribute}
-                                                   value={attribute}
-                                                   defaultChecked={store.getState().elements[this.currentElementData.elementData.name].attributeConstraints.indexOf(attribute) === -1}
-                                                   onChange={(event) => this.handleAttributeChange(event, attribute)}/>
-                                            <label htmlFor={attribute}>{attribute}</label>
+                    this.currentElementData
+                        ? <div>
+                            {
+                                store.getState().types[this.currentElementData.elementData.type].attributes.length === 0
+                                    ? <div className="placeholderText">No attributes yet</div>
+                                    : <table>
+                                        <tbody>
+                                        <tr>
+                                            <th>name</th>
+                                            <th>in use</th>
+                                            <th>mandatory</th>
+                                        </tr>
+                                        {
+                                            this.currentElementData
+                                            && store.getState().types[this.currentElementData.elementData.type].attributes.map(attribute => {
+                                                const uuidv4 = require('uuid/v4');
+                                                return (
+                                                    <tr key={uuidv4()}>
+                                                        <td>
+                                                            <label htmlFor={attribute}>{attribute}</label>
+                                                            <ul>
+                                                                {
+                                                                    attribute in store.getState().elements[this.currentElementData.elementData.name].attributeEnums && Object.keys(store.getState().elements[this.currentElementData.elementData.name].attributeEnums[attribute]).map((key, index) => {
+                                                                        const uuidv4 = require('uuid/v4');
+                                                                        return (
+                                                                            <li key={uuidv4()}>{key} - {store.getState().elements[this.currentElementData.elementData.name].attributeEnums[attribute][key]}
+                                                                                <button
+                                                                                    onClick={() => this.removeEnum(attribute, key)}>remove
+                                                                                </button>
+                                                                            </li>
+                                                                        )
+                                                                    })
+                                                                }
+                                                            </ul>
+                                                        </td>
+                                                        <td>
+                                                            <input type="checkbox"
+                                                                   id={attribute}
+                                                                   name={attribute}
+                                                                   value={attribute}
+                                                                   defaultChecked={store.getState().elements[this.currentElementData.elementData.name].attributeConstraints.indexOf(attribute) === -1}
+                                                                   onChange={(event) => this.handleAttributeChange(event, attribute)}/>
+                                                        </td>
+                                                        <td>
+                                                            <input type="checkbox"
+                                                                   id="mandatory"
+                                                                   name="mandatory"
+                                                                   value="mandatory"
+                                                                   defaultChecked={store.getState().elements[this.currentElementData.elementData.name].mandatoryAttributes.indexOf(attribute) > -1}
+                                                                   onChange={(event) => this.handleMandatoryChange(event, attribute)}/>
+                                                        </td>
+                                                    </tr>);
+                                            })
+                                        }
+                                        </tbody>
+                                    </table>
+                            }
 
-                                            <input type="checkbox"
-                                                   id="mandatory"
-                                                   name="mandatory"
-                                                   value="mandatory"
-                                                   defaultChecked={store.getState().elements[this.currentElementData.elementData.name].mandatoryAttributes.indexOf(attribute) > -1}
-                                                   onChange={(event) => this.handleMandatoryChange(event, attribute)}/>
-                                            <label htmlFor={attribute}>set mandatory</label>
-                                            OR
-                                            <button onClick={() => this.handleAddEnum(attribute)}>add new
-                                                enumeration</button>
-                                        </div>
-                                        <ul>
-                                            {
-                                                attribute in store.getState().elements[this.currentElementData.elementData.name].attributeEnums && Object.keys(store.getState().elements[this.currentElementData.elementData.name].attributeEnums[attribute]).map((key, index) => {
-                                                    const uuidv4 = require('uuid/v4');
-                                                    return (
-                                                        <li key={uuidv4()}>{key} - {store.getState().elements[this.currentElementData.elementData.name].attributeEnums[attribute][key]}
-                                                            <button
-                                                                onClick={() => this.removeEnum(attribute, key)}>remove
-                                                            </button>
-                                                        </li>
-                                                    )
-                                                })
-                                            }
-                                        </ul>
-                                    </div>);
-                            })
-                        }
+                            <div className="addAttributeWrapper">
+                                <div>
+                                    <span className="describeLabel">name</span><br/>
+                                    <input type="text" ref={this.addAttributeRef}/>
+                                </div>
+                                <button onClick={this.handleAddAttribute.bind(this)}>add new attribute</button>
+                            </div>
 
-                        key:<input type="text" ref={this.enumKeyRef}/>
-                        value:<input type="text" ref={this.enumValueRef}/><br/>
-                        <input type="text" ref={this.addAttributeRef}/>
-                        <button onClick={this.handleAddAttribute.bind(this)}>add new attribute</button>
-                    </div>
+                            <div className="addEnumWrapper">
+                                <div className="innerEnumWrapper">
+                                    <div>
+                                        <span className="describeLabel">key</span><br/>
+                                        <input type="text" ref={this.enumKeyRef}/>
+                                    </div>
+                                    <div>
+                                        <span className="describeLabel">value</span><br/>
+                                        <input type="text" ref={this.enumValueRef}/>
+                                    </div>
+                                    <select ref={this.attributeSelectRef}>
+                                        <option disabled selected value> -- select attribute --</option>
+                                        {
+                                            store.getState().types[this.currentElementData.elementData.type].attributes.map((attribute, index) => {
+                                                const uuidv4 = require('uuid/v4');
+                                                return (<option key={uuidv4()}>{attribute}</option>);
+                                            })
+                                        }
+                                    </select>
+                                </div>
+                                <button onClick={() => this.handleAddEnum()}>add enumeration</button>
+                            </div>
+                        </div>
+                        : <div className="placeholderText">Please select an element</div>
                 }
 
             </div>

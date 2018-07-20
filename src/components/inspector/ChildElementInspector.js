@@ -30,6 +30,7 @@ class ChildElementInspector extends React.Component {
         store.dispatch(initTreeData(this.initTree(store.getState().types, newElements)));
     }
 
+    // TODO don't add to each element of same type when adding new child to specific element
     handleAddElement() {
         let newTypes = JSON.parse(JSON.stringify(store.getState().types));
         let newElements = JSON.parse(JSON.stringify(store.getState().elements));
@@ -76,9 +77,6 @@ class ChildElementInspector extends React.Component {
         }
     }
 
-    handleTypeSelectChange() {
-    }
-
     initTree(types, elements) {
         const createNode = (elementName) => {
             return types[elements[elementName].type].children
@@ -114,46 +112,72 @@ class ChildElementInspector extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="childElementInspector">
 
-                CHILD ELEMENTS <br/>
+                <h3>CHILD ELEMENTS</h3>
 
                 {
-                    this.currentElementData &&
-                    <div>
-                        Possible child elements
-                        for {this.currentElementData ? `${this.currentElementData.title} (${this.currentElementData.subtitle})` : ''}:<br/>
-                        {
-                            this.currentElementData
-                            && store.getState().types[this.currentElementData.elementData.type].children.map(child => {
-                                const uuidv4 = require('uuid/v4');
-                                return (
-                                    <div key={uuidv4()}>
-                                        <input type="checkbox"
-                                               id={child}
-                                               name={child}
-                                               value={child}
-                                               defaultChecked={store.getState().elements[this.currentElementData.elementData.name].elementConstraints.indexOf(child) === -1}
-                                               onChange={(event) => this.handleElementChange(event, child)}/>
-                                        <label htmlFor={child}>{child}</label>
-                                    </div>);
-                            })
-                        }
-                        element name:<input type="text" ref={this.addChildRef}/>
-                        element type:
-                        <select ref={this.typeSelectRef} onChange={this.handleTypeSelectChange.bind(this)}>
-                            <option disabled selected value> -- select a type --</option>
+                    this.currentElementData
+                        ? <div>
+
                             {
-                                Object.keys(store.getState().types).map((type, index) => {
-                                    const uuidv4 = require('uuid/v4');
-                                    return (<option key={uuidv4()}>{type}</option>);
-                                })
+                                store.getState().types[this.currentElementData.elementData.type].children.length === 0
+                                    ? <div className="placeholderText">No children yet</div>
+                                    : <table>
+                                        <tbody>
+                                        <tr>
+                                            <th>name</th>
+                                            <th>type</th>
+                                            <th>in use</th>
+                                        </tr>
+                                        {
+                                            this.currentElementData
+                                            && store.getState().types[this.currentElementData.elementData.type].children.map(child => {
+                                                const uuidv4 = require('uuid/v4');
+                                                return (
+                                                    <tr key={uuidv4()}>
+                                                        <td>
+                                                            <label htmlFor={child}>{child}</label>
+                                                        </td>
+                                                        <td>
+                                                            <label>{store.getState().elements[child].type}</label>
+                                                        </td>
+                                                        <td>
+                                                            <input type="checkbox"
+                                                                   id={child}
+                                                                   name={child}
+                                                                   value={child}
+                                                                   defaultChecked={store.getState().elements[this.currentElementData.elementData.name].elementConstraints.indexOf(child) === -1}
+                                                                   onChange={(event) => this.handleElementChange(event, child)}/>
+                                                        </td>
+                                                    </tr>);
+                                            })
+                                        }
+                                        </tbody>
+                                    </table>
                             }
-                        </select>
-                        OR
-                        <input type="text" ref={this.addChildTypeRef}/>
-                        <button onClick={this.handleAddElement.bind(this)}>add new child</button>
-                    </div>
+
+                            <div className="addChildWrapper">
+                                <span className="describeLabel">name</span><br/>
+                                <input type="text" ref={this.addChildRef}/><br/>
+
+                                <span className="describeLabel">type</span><br/>
+                                <select ref={this.typeSelectRef}>
+                                    <option disabled selected value> -- select a type --</option>
+                                    {
+                                        Object.keys(store.getState().types).map((type, index) => {
+                                            const uuidv4 = require('uuid/v4');
+                                            return (<option key={uuidv4()}>{type}</option>);
+                                        })
+                                    }
+                                </select>
+                                OR
+                                <input type="text" ref={this.addChildTypeRef}/>
+                                <button onClick={this.handleAddElement.bind(this)}>add new child</button>
+                            </div>
+
+                        </div>
+                        : <div className="placeholderText">Please select an element</div>
                 }
 
             </div>
