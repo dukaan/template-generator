@@ -1,0 +1,8 @@
+.mainWrapper {
+  display: flex;
+  flex-direction: row; }
+
+.modelTree {
+  background-color: #353535;
+  width: calc(100% - 450px);
+  min-height: calc(100vh - 50px); }

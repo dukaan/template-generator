@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.sprylab.com/2015/purple-issue-ds"
+           targetNamespace="http://www.sprylab.com/2015/purple-issue-ds" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified" xmlns:r="http://www.artifacts.de/2012/richtext-1.0">
+    <xs:import schemaLocation="storytelling-richtext.xsd" namespace="http://www.artifacts.de/2012/richtext-1.0"/>
+
+    <xs:complexType name="NoRichText">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="RichText">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="Issue">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded">
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Fragment">
+        <xs:complexContent>
+            <xs:extension base="Tagged">
+                <xs:attribute name="name" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="Tagged">
+        <xs:attribute name="taggedId"/>
+        <xs:attribute name="taggedPageId"/>
+    </xs:complexType>
+
+    <xs:element name="issue" type="Issue"/>
+</xs:schema>

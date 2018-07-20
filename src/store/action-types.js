@@ -1,0 +1,6 @@
+export const INIT_TYPES = "INIT_TYPES";
+export const INIT_ELEMENTS = "INIT_ELEMENTS";
+export const INIT_TREEDATA = "INIT_TREEDATA";
+
+export const SET_CURRENT_ELEMENT_DATA = "SET_CURRENT_ELEMENT_DATA";
+
