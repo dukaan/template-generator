@@ -128,7 +128,7 @@ class AttributeInspector extends React.Component {
         return (
             <div>
 
-                ATTRIBUTES <br />
+                ATTRIBUTES <br/>
 
                 {
                     this.currentElementData &&
@@ -167,7 +167,8 @@ class AttributeInspector extends React.Component {
                                                     const uuidv4 = require('uuid/v4');
                                                     return (
                                                         <li key={uuidv4()}>{key} - {store.getState().elements[this.currentElementData.elementData.name].attributeEnums[attribute][key]}
-                                                            <button onClick={() => this.removeEnum(attribute, key)}>remove
+                                                            <button
+                                                                onClick={() => this.removeEnum(attribute, key)}>remove
                                                             </button>
                                                         </li>
                                                     )
@@ -184,7 +185,7 @@ class AttributeInspector extends React.Component {
                         <button onClick={this.handleAddAttribute.bind(this)}>add new attribute</button>
                     </div>
                 }
-                
+
             </div>
         );
     }
